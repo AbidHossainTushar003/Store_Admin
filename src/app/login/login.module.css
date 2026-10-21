@@ -1,0 +1,416 @@
+.loginPage {
+  display: grid;
+  min-height: 100vh;
+  min-height: 100svh;
+  grid-template-columns: minmax(0, 0.92fr) minmax(25rem, 1.08fr);
+  overflow: hidden;
+  background: #fff;
+  color: #20283a;
+}
+
+.brandPanel {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  padding: clamp(2rem, 5vw, 4.75rem);
+  background:
+    radial-gradient(ellipse at 12% 95%, rgb(91 91 214 / 24%), transparent 45%),
+    #111a2d;
+  color: #fff;
+}
+
+.brandPanel::after {
+  position: absolute;
+  right: -10rem;
+  bottom: -15rem;
+  width: 31rem;
+  height: 31rem;
+  border: 1px solid rgb(255 255 255 / 8%);
+  border-radius: 50%;
+  box-shadow: 0 0 0 3rem rgb(255 255 255 / 2%), 0 0 0 6rem rgb(255 255 255 / 2%);
+  content: '';
+  pointer-events: none;
+}
+
+.brand {
+  z-index: 1;
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  gap: 0.8rem;
+  color: #fff;
+  font-size: 1.12rem;
+  font-weight: 750;
+  letter-spacing: -0.025em;
+  text-decoration: none;
+}
+
+.brandMark {
+  display: grid;
+  width: 2.55rem;
+  height: 2.55rem;
+  place-items: center;
+  border: 1px solid rgb(255 255 255 / 24%);
+  border-radius: 0.75rem;
+  background: linear-gradient(145deg, #7779ed, #4c64c7);
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+
+.brandMessage {
+  z-index: 1;
+  width: min(100%, 34rem);
+  margin-block: 4rem;
+}
+
+.eyebrow,
+.sectionEyebrow,
+.mobileEyebrow {
+  margin: 0 0 1rem;
+  color: #9299ff;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+
+.brandMessage h1 {
+  max-width: 11ch;
+  margin: 0;
+  font-size: clamp(2.3rem, 4.5vw, 4.25rem);
+  font-weight: 700;
+  letter-spacing: -0.055em;
+  line-height: 1.04;
+}
+
+.brandMessage > p:last-child {
+  max-width: 31rem;
+  margin: 1.35rem 0 0;
+  color: #b9c3d8;
+  font-size: 1rem;
+  line-height: 1.75;
+}
+
+.brandFooter {
+  z-index: 1;
+  margin: 0;
+  color: #9ba8c1;
+  font-size: 0.78rem;
+}
+
+.formPanel {
+  display: grid;
+  min-width: 0;
+  place-items: center;
+  padding: clamp(1.5rem, 5vw, 4.5rem);
+  background: #f7f8fc;
+}
+
+.formContent {
+  width: min(100%, 27rem);
+}
+
+.sectionEyebrow {
+  margin-bottom: 0.8rem;
+  color: #5558c7;
+}
+
+.formContent h2 {
+  margin: 0;
+  color: #20283a;
+  font-size: clamp(1.9rem, 3vw, 2.35rem);
+  font-weight: 730;
+  letter-spacing: -0.045em;
+  line-height: 1.15;
+}
+
+.intro {
+  margin: 0.65rem 0 1.7rem;
+  color: #667187;
+  font-size: 0.94rem;
+  line-height: 1.65;
+}
+
+.mobileEyebrow {
+  display: none;
+}
+
+.securityNotice {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+  margin-bottom: 1.7rem;
+  padding: 0.95rem;
+  border: 1px solid #dcdefb;
+  border-radius: 0.75rem;
+  background: #f0f1ff;
+  color: #34366f;
+}
+
+.noticeIcon {
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 0.6rem;
+  background: #e2e4ff;
+  color: #4d50bc;
+}
+
+.noticeIcon svg {
+  width: 1.15rem;
+  height: 1.15rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.7;
+}
+
+.securityNotice > span:last-child {
+  display: grid;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.securityNotice strong {
+  font-size: 0.78rem;
+}
+
+.securityNotice > span:last-child > span {
+  color: #5c5e8e;
+  font-size: 0.76rem;
+  line-height: 1.5;
+}
+
+.formSection {
+  display: grid;
+  gap: 1.15rem;
+}
+
+.field {
+  display: grid;
+  min-width: 0;
+  gap: 0.45rem;
+}
+
+.field label {
+  color: #283147;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.field input {
+  width: 100%;
+  min-width: 0;
+  min-height: 3.15rem;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid #dce1eb;
+  border-radius: 0.65rem;
+  outline: none;
+  background: #fff;
+  color: #20283a;
+  font-size: 0.9rem;
+  transition: border-color 140ms ease, box-shadow 140ms ease;
+}
+
+.field input::placeholder {
+  color: #929bad;
+  opacity: 1;
+}
+
+.field input:focus-visible,
+.visibilityButton:focus-visible,
+.submitButton:focus-visible,
+.brand:focus-visible {
+  outline: 3px solid #7779ed;
+  outline-offset: 3px;
+}
+
+.field input:focus-visible {
+  border-color: #5b5bd6;
+  box-shadow: 0 0 0 3px rgb(91 91 214 / 12%);
+}
+
+.passwordControl {
+  display: flex;
+  min-width: 0;
+}
+
+.passwordControl input {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.visibilityButton {
+  min-width: 4.1rem;
+  padding: 0 0.75rem;
+  border: 1px solid #dce1eb;
+  border-left: 0;
+  border-radius: 0 0.65rem 0.65rem 0;
+  background: #fff;
+  color: #4c50b6;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.visibilityButton:hover {
+  background: #f5f5ff;
+}
+
+.fieldHelp {
+  color: #69748a;
+  font-size: 0.72rem;
+  line-height: 1.45;
+}
+
+.formStatus {
+  margin: 0;
+  color: #5c5e8e;
+  font-size: 0.76rem;
+  line-height: 1.5;
+}
+
+.submitButton {
+  display: flex;
+  min-height: 3.2rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid #4d50b9;
+  border-radius: 0.65rem;
+  background: #5558c7;
+  color: #fff;
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.submitButton:disabled {
+  border-color: #8b8ed6;
+  background: #7779c9;
+  cursor: not-allowed;
+}
+
+.submitButton span {
+  font-size: 1.15rem;
+}
+
+.securityBoundary {
+  margin: 1.2rem 0 0;
+  padding: 0.9rem;
+  border-left: 3px solid #bd7c18;
+  border-radius: 0.35rem;
+  background: #fff8ed;
+  color: #65512e;
+  font-size: 0.73rem;
+  line-height: 1.6;
+}
+
+.securityBoundary strong {
+  color: #4e3b1b;
+}
+
+.footer {
+  margin: 1.8rem 0 0;
+  color: #7b8598;
+  font-size: 0.72rem;
+  text-align: center;
+}
+
+@media (max-width: 800px) {
+  .loginPage {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .brandPanel {
+    min-height: 15rem;
+    padding: 1.5rem clamp(1.25rem, 6vw, 3rem);
+  }
+
+  .brandMessage {
+    margin: 2.25rem 0 0.5rem;
+  }
+
+  .brandMessage h1 {
+    max-width: 18ch;
+    font-size: clamp(1.8rem, 5vw, 2.5rem);
+  }
+
+  .brandMessage > p:last-child {
+    max-width: 38rem;
+    margin-top: 0.75rem;
+    font-size: 0.88rem;
+  }
+
+  .brandFooter {
+    display: none;
+  }
+
+  .formPanel {
+    padding: 2.5rem clamp(1.25rem, 6vw, 3rem);
+  }
+
+  .formContent {
+    width: min(100%, 32rem);
+  }
+}
+
+@media (max-width: 480px) {
+  .brandPanel {
+    min-height: auto;
+    padding-block: 1.1rem;
+  }
+
+  .brandMark {
+    width: 2.2rem;
+    height: 2.2rem;
+  }
+
+  .brandMessage {
+    margin-top: 1.6rem;
+  }
+
+  .brandMessage h1 {
+    font-size: clamp(1.7rem, 8vw, 2.15rem);
+  }
+
+  .brandMessage > p:last-child {
+    font-size: 0.8rem;
+  }
+
+  .formPanel {
+    place-items: start center;
+    padding-block: 2rem;
+  }
+
+  .mobileEyebrow {
+    display: block;
+    margin-bottom: 0.65rem;
+    color: #5558c7;
+  }
+
+  .sectionEyebrow {
+    margin-bottom: 0.55rem;
+  }
+
+  .intro {
+    margin-bottom: 1.25rem;
+  }
+
+  .securityNotice {
+    margin-bottom: 1.25rem;
+    padding: 0.8rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .field input {
+    transition: none;
+  }
+}
