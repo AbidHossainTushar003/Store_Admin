@@ -4,10 +4,10 @@ import './globals.css';
 
 export const metadata: Metadata = {
   title: {
-    default: 'Shopademia Admin Demo',
-    template: '%s | Shopademia Admin Demo',
+    default: 'Shopademia Admin · Local Test',
+    template: '%s | Shopademia Admin',
   },
-  description: 'A sample-only Shopademia administration dashboard preview.',
+  description: 'Loopback-only local test controls for cash-on-delivery orders.',
 };
 
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {

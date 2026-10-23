@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { AdminShell } from '@/components/layout/admin-shell';
-import { DashboardPage } from '@/features/dashboard/dashboard-page';
+import { AdminHomePage } from '@/features/operations/local-admin-pages';
 
 export const metadata: Metadata = {
   title: 'Overview',
@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 export default function AdminOverviewPage() {
   return (
     <AdminShell>
-      <DashboardPage />
+      <AdminHomePage />
     </AdminShell>
   );
 }

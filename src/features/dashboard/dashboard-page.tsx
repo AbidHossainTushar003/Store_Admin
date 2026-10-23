@@ -1,214 +1,233 @@
-import {
-  dashboardMetrics,
-  sampleMarketplaceSummary,
-  sampleOrderTrend,
-  sampleRecentOrders,
-  sampleSellerActivity,
-} from './demo-data';
+'use client';
 
-function MetricIcon({ kind }: { kind: (typeof dashboardMetrics)[number]['icon'] }) {
-  switch (kind) {
-    case 'orders':
-      return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14v16H5z" /><path d="M8 8h8M8 12h8M8 16h5" /></svg>;
-    case 'sales':
-      return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M17 7.5c0-1.7-1.9-3-4.5-3S8 5.7 8 7.3s1.3 2.6 4.5 3.2 4.5 1.7 4.5 3.5-1.9 3.3-4.5 3.3-4.5-1.3-4.5-3" /></svg>;
-    case 'sellers':
-      return <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3" /><path d="M3.5 19c.4-3.1 2.3-4.7 5.5-4.7s5.1 1.6 5.5 4.7M16 5.5a3 3 0 0 1 0 5.8M17 14.5c2.2.5 3.4 2 3.6 4.5" /></svg>;
-    case 'products':
-      return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9z" /><path d="m4.5 7.7 7.5 4.4 7.5-4.4M12 12.1V21" /></svg>;
+import { useCallback, useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
+import { apiBaseUrl, usesAuth0Admin } from '@/lib/api-base';
+
+type Order = {
+  id: string;
+  reference: string;
+  buyerName: string;
+  buyerEmail: string;
+  buyerPhone: string;
+  deliveryAddress: string;
+  totalBdt: number;
+  status: string;
+  createdAt: string;
+  items: Array<{ title: string; quantity: number; lineTotalBdt: number }>;
+};
+
+function parseOrders(value: unknown): Order[] | undefined {
+  if (typeof value !== 'object' || value === null || !('orders' in value) || !Array.isArray(value.orders)) {
+    return undefined;
   }
-}
-
-function MetricsGrid() {
-  return (
-    <section className="kpi-grid" aria-label="Sample dashboard metrics">
-      {dashboardMetrics.map((metric) => (
-        <article className="kpi-card" key={metric.label}>
-          <div className="kpi-topline">
-            <span className="kpi-label">{metric.label}</span>
-            <span className="kpi-icon"><MetricIcon kind={metric.icon} /></span>
-          </div>
-          <p className="kpi-value">{metric.value}</p>
-          <p className="kpi-note">{metric.note}</p>
-        </article>
-      ))}
-    </section>
-  );
-}
-
-function OrdersChart() {
-  const points = sampleOrderTrend.map((point, index) => {
-    const x = 48 + index * 70;
-    const maxOrders = Math.max(...sampleOrderTrend.map((item) => item.orders));
-    const y = 164 - (point.orders / maxOrders) * 116;
-    return { ...point, x, y };
-  });
-  const polyline = points.map((point) => `${point.x},${point.y}`).join(' ');
-  const area = `${points[0].x},174 ${polyline} ${points[points.length - 1].x},174`;
-
-  return (
-    <section className="panel" aria-labelledby="orders-chart-heading">
-      <div className="panel-header">
-        <div>
-          <h2 className="panel-title" id="orders-chart-heading">Order activity</h2>
-          <p className="panel-subtitle">Illustrative monthly demo order counts</p>
-        </div>
-        <span className="demo-tag">SAMPLE</span>
-      </div>
-      <div className="chart-wrap">
-        <figure
-          aria-labelledby="orders-chart-heading"
-          aria-describedby="orders-chart-description"
-        >
-          <svg className="chart-svg" viewBox="0 0 520 210" role="img">
-            <title>Sample order activity chart</title>
-            <desc id="orders-chart-description">
-              Fictional order counts by month from January through July. This is sample data, not live platform activity.
-            </desc>
-            <defs>
-              <linearGradient id="demoChartFill" x1="0" x2="0" y1="0" y2="1">
-                <stop offset="0%" stopColor="#6969df" stopOpacity=".2" />
-                <stop offset="100%" stopColor="#6969df" stopOpacity=".01" />
-              </linearGradient>
-            </defs>
-            {[48, 86, 124, 162].map((y) => (
-              <line className="chart-gridline" key={y} x1="42" x2="500" y1={y} y2={y} />
-            ))}
-            <text className="chart-axis-label" x="8" y="52">80</text>
-            <text className="chart-axis-label" x="8" y="90">60</text>
-            <text className="chart-axis-label" x="8" y="128">40</text>
-            <text className="chart-axis-label" x="8" y="166">20</text>
-            <polygon className="chart-area" points={area} />
-            <polyline className="chart-line" points={polyline} />
-            {points.map((point) => (
-              <g key={point.month}>
-                <circle className="chart-point" cx={point.x} cy={point.y} r="4" />
-                <text className="chart-axis-label" textAnchor="middle" x={point.x} y="196">
-                  {point.month}
-                </text>
-              </g>
-            ))}
-          </svg>
-          <figcaption className="chart-caption">
-            <strong>DEMO DATA — NOT CONNECTED TO LIVE SHOPADEMIA SYSTEMS</strong>
-            <span>Counts shown are fictional examples only.</span>
-          </figcaption>
-        </figure>
-      </div>
-    </section>
-  );
-}
-
-function SellerActivity() {
-  return (
-    <section className="panel" aria-labelledby="seller-activity-heading">
-      <div className="panel-header">
-        <div>
-          <h2 className="panel-title" id="seller-activity-heading">Seller activity</h2>
-          <p className="panel-subtitle">Illustrative marketplace events</p>
-        </div>
-        <span className="demo-tag">DEMO</span>
-      </div>
-      <ul className="activity-list">
-        {sampleSellerActivity.map((activity) => (
-          <li className="activity-item" key={activity.text}>
-            <span className="activity-dot" aria-hidden="true" />
-            <div>
-              <p>{activity.text}</p>
-              <time>{activity.time}</time>
-            </div>
-          </li>
-        ))}
-      </ul>
-      <p className="activity-note">
-        <strong>{sampleMarketplaceSummary.label} · {sampleMarketplaceSummary.title}</strong>
-        {sampleMarketplaceSummary.body}
-      </p>
-    </section>
-  );
-}
-
-function RecentOrders() {
-  return (
-    <section className="panel orders-panel" aria-labelledby="recent-orders-heading">
-      <div className="panel-header">
-        <div>
-          <h2 className="panel-title" id="recent-orders-heading">Recent orders</h2>
-          <p className="panel-subtitle">Fictional example rows · no order actions are available</p>
-        </div>
-        <span className="demo-tag">SAMPLE DATA</span>
-      </div>
-      <div
-        className="table-scroll"
-        role="region"
-        tabIndex={0}
-        aria-label="Scrollable sample orders table"
-      >
-        <table className="orders-table">
-          <caption className="visually-hidden">
-            Sample recent orders. These are fictional examples and not live Shopademia records.
-          </caption>
-          <thead>
-            <tr>
-              <th scope="col">Reference</th>
-              <th scope="col">Sample buyer</th>
-              <th scope="col">Example seller</th>
-              <th scope="col">Sample date</th>
-              <th scope="col">Demo status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {sampleRecentOrders.map((order) => (
-              <tr key={order.reference}>
-                <td>{order.reference}</td>
-                <td>{order.buyer}</td>
-                <td>{order.seller}</td>
-                <td>{order.date}</td>
-                <td>
-                  <span
-                    className={`status-pill${order.status === 'Sample processing' ? ' status-processing' : order.status === 'Demo only' ? ' status-demo' : ''}`}
-                  >
-                    {order.status}
-                  </span>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </section>
-  );
+  const orders: Order[] = [];
+  for (const order of value.orders) {
+    if (
+      typeof order !== 'object' || order === null ||
+      !('id' in order) || typeof order.id !== 'string' ||
+      !('reference' in order) || typeof order.reference !== 'string' ||
+      !('buyerName' in order) || typeof order.buyerName !== 'string' ||
+      !('buyerEmail' in order) || typeof order.buyerEmail !== 'string' ||
+      !('buyerPhone' in order) || typeof order.buyerPhone !== 'string' ||
+      !('deliveryAddress' in order) || typeof order.deliveryAddress !== 'string' ||
+      !('totalBdt' in order) || typeof order.totalBdt !== 'number' ||
+      !('status' in order) || typeof order.status !== 'string' ||
+      !('createdAt' in order) || typeof order.createdAt !== 'string' ||
+      !('items' in order) || !Array.isArray(order.items)
+    ) {
+      return undefined;
+    }
+    const items: Order['items'] = [];
+    for (const item of order.items) {
+      if (
+        typeof item !== 'object' || item === null ||
+        !('title' in item) || typeof item.title !== 'string' ||
+        !('quantity' in item) || typeof item.quantity !== 'number' ||
+        !('lineTotalBdt' in item) || typeof item.lineTotalBdt !== 'number'
+      ) {
+        return undefined;
+      }
+      items.push({
+        title: item.title,
+        quantity: item.quantity,
+        lineTotalBdt: item.lineTotalBdt,
+      });
+    }
+    orders.push({
+      id: order.id,
+      reference: order.reference,
+      buyerName: order.buyerName,
+      buyerEmail: order.buyerEmail,
+      buyerPhone: order.buyerPhone,
+      deliveryAddress: order.deliveryAddress,
+      totalBdt: order.totalBdt,
+      status: order.status,
+      createdAt: order.createdAt,
+      items,
+    });
+  }
+  return orders;
 }
 
 export function DashboardPage() {
+  const [orders, setOrders] = useState<Order[] | null>(null);
+  const [error, setError] = useState('');
+  const [pendingId, setPendingId] = useState<string | null>(null);
+  const [feedback, setFeedback] = useState('');
+  const [refreshing, setRefreshing] = useState(false);
+  const requestInFlight = useRef(false);
+
+  const loadOrders = useCallback(async () => {
+    if (requestInFlight.current) return;
+    requestInFlight.current = true;
+    try {
+      const response = await fetch(`${apiBaseUrl}/admin/orders`, {
+        credentials: 'include',
+        cache: 'no-store',
+      });
+      if (!response.ok) {
+        throw new Error(`API returned HTTP ${response.status}`);
+      }
+      const parsed = parseOrders(await response.json());
+      if (!parsed) {
+        throw new Error('Shopademia API returned an invalid admin order list.');
+      }
+      setOrders(parsed);
+    } finally {
+      requestInFlight.current = false;
+    }
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    void loadOrders().catch((cause: unknown) => {
+      console.error('Unable to load admin orders.', cause);
+      if (active) {
+        setError(usesAuth0Admin
+          ? 'Could not load orders. Check Super Admin access, API availability, and database schema, then try again.'
+          : 'Could not load orders. Check the local admin session, API availability, and database schema, then try again.');
+      }
+    });
+    return () => {
+      active = false;
+    };
+  }, [loadOrders]);
+
+  async function refreshOrders() {
+    if (requestInFlight.current) return;
+    setRefreshing(true);
+    setError('');
+    setFeedback('');
+    try {
+      await loadOrders();
+    } catch (cause) {
+      console.error('Unable to refresh admin orders.', cause);
+      setError(usesAuth0Admin
+        ? 'The order list could not be refreshed. Check your Super Admin session and API.'
+        : 'The order list could not be refreshed. Check your admin session and the local API.');
+    } finally {
+      setRefreshing(false);
+    }
+  }
+
+  async function confirmOrder(orderId: string) {
+    setPendingId(orderId);
+    setFeedback('');
+    try {
+      const response = await fetch(
+        `${apiBaseUrl}/admin/orders/${encodeURIComponent(orderId)}/confirm`,
+        { method: 'POST', credentials: 'include' },
+      );
+      if (!response.ok) {
+        throw new Error(`API returned HTTP ${response.status}`);
+      }
+      await loadOrders();
+      setFeedback('Order confirmed by the admin.');
+    } catch (cause) {
+      console.error('Unable to confirm admin order.', cause);
+      setFeedback('The order could not be confirmed. Refresh the order list and try again.');
+    } finally {
+      setPendingId(null);
+    }
+  }
+
+  const waitingForSeller = orders?.filter((order) => order.status === 'pending_seller_confirmation').length ?? 0;
+  const waitingForAdmin = orders?.filter((order) => order.status === 'pending_admin_confirmation').length ?? 0;
+
   return (
     <div className="dashboard-page">
       <div className="page-heading">
         <div>
-          <p>Platform overview</p>
-          <h1>Marketplace overview</h1>
+          <p>{usesAuth0Admin ? 'Super Admin operations' : 'Local test operations'}</p>
+          <h1>Marketplace orders</h1>
         </div>
-        <span className="demo-tag">SAMPLE DASHBOARD</span>
+        <span className="demo-tag">{usesAuth0Admin ? 'COD OPERATIONS' : 'LOCAL COD'}</span>
       </div>
 
-      <aside className="demo-banner" aria-label="Demo data notice">
+      <aside className="demo-banner" aria-label="Local test data notice">
         <span className="demo-banner-icon" aria-hidden="true">i</span>
         <div>
-          <strong>DEMO DATA — NOT CONNECTED TO LIVE SHOPADEMIA SYSTEMS</strong>
-          <p>
-            Every metric, chart, order, seller, and activity below is fictional sample content.
-            No administrative actions or live platform data are available.
-          </p>
+          <strong>{usesAuth0Admin ? 'PAYMENT AND FULFILMENT NOT CONFIGURED' : 'LOCAL DEVELOPMENT DATABASE'}</strong>
+          <p>{usesAuth0Admin
+            ? 'These records are operational only. No payment has been taken and no courier dispatch is connected.'
+            : 'Only fictional test orders are expected. No payment has been taken and no shipping integration is connected.'}</p>
         </div>
       </aside>
 
-      <MetricsGrid />
+      <section className="kpi-grid" aria-label="Marketplace order counts">
+        <article className="kpi-card"><span className="kpi-label">Orders</span><p className="kpi-value">{orders?.length ?? '—'}</p></article>
+        <article className="kpi-card"><span className="kpi-label">Awaiting seller</span><p className="kpi-value">{orders === null ? '—' : waitingForSeller}</p></article>
+        <article className="kpi-card"><span className="kpi-label">Awaiting admin</span><p className="kpi-value">{orders === null ? '—' : waitingForAdmin}</p></article>
+      </section>
 
-      <div className="dashboard-grid">
-        <OrdersChart />
-        <SellerActivity />
-        <RecentOrders />
-      </div>
+      <section className="panel orders-panel" aria-labelledby="orders-heading">
+        <div className="panel-header">
+          <div>
+            <h2 className="panel-title" id="orders-heading">COD orders</h2>
+            <p className="panel-subtitle">The seller confirms first; the administrator finalizes the operational record.</p>
+          </div>
+          <div className="form-actions">
+            <button className="admin-action" disabled={refreshing || pendingId !== null} onClick={() => void refreshOrders()} type="button">
+              {refreshing ? 'Refreshing…' : 'Refresh orders'}
+            </button>
+            <Link className="demo-tag" href="/login">Admin access</Link>
+          </div>
+        </div>
+        {error ? <p role="alert">{error}</p> : null}
+        {feedback ? <p role="status">{feedback}</p> : null}
+        {orders === null && !error ? <p role="status">Loading orders…</p> : null}
+        {orders?.length === 0 ? <p>No orders have been placed.</p> : null}
+        {orders?.map((order) => (
+          <article className="panel" key={order.id}>
+            <h3>{order.reference}</h3>
+            <p>Status: {order.status.replaceAll('_', ' ')}</p>
+            <p>Placed {new Date(order.createdAt).toLocaleString()}</p>
+            <p>Buyer: {order.buyerName} · {order.buyerEmail} · {order.buyerPhone}</p>
+            <p>Delivery address: {order.deliveryAddress}</p>
+            <ul>
+              {order.items.map((item) => (
+                <li key={`${order.id}-${item.title}`}>
+                  {item.quantity} × {item.title} · ৳{item.lineTotalBdt.toLocaleString()}
+                </li>
+              ))}
+            </ul>
+            <strong>COD total: ৳{order.totalBdt.toLocaleString()}</strong>
+            {order.status === 'pending_admin_confirmation' ? (
+              <p>
+                <button
+                  className="button button-primary"
+                  disabled={pendingId !== null}
+                  onClick={() => void confirmOrder(order.id)}
+                  type="button"
+                >
+                  {pendingId === order.id ? 'Confirming…' : 'Confirm as admin'}
+                </button>
+              </p>
+            ) : null}
+          </article>
+        ))}
+      </section>
     </div>
   );
 }

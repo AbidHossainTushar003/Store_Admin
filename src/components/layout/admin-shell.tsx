@@ -1,20 +1,27 @@
+'use client';
+
 import Link from 'next/link';
 import type { ReactNode } from 'react';
+import { usePathname } from 'next/navigation';
+import { useEffect } from 'react';
+import { usesAuth0Admin } from '@/lib/api-base';
+import { AdminSessionActions } from './admin-session-actions';
 
-const placeholderSections = [
-  'Products',
-  'Categories',
-  'Sellers',
-  'Customers',
-  'Orders',
-  'Analytics',
-  'Audit logs',
-  'Settings',
+const sections = [
+  { label: 'Products', href: '/products' },
+  { label: 'Categories', href: '/categories' },
+  { label: 'Sellers', href: '/sellers' },
+  { label: 'Customers', href: '/customers' },
+  { label: 'Orders', href: '/orders' },
+  { label: 'Analytics', href: '/analytics' },
+  { label: 'Recent activity', href: '/activity' },
+  { label: 'Seller applications', href: '/applications' },
+  { label: 'Settings', href: '/settings' },
 ];
 
 function Brand() {
   return (
-    <Link className="brand" href="/" aria-label="Shopademia Admin demo overview">
+    <Link className="brand" href="/" aria-label="Shopademia Admin overview">
       <span className="brand-mark" aria-hidden="true">S</span>
       <span>Shopademia</span>
     </Link>
@@ -33,64 +40,63 @@ function DashboardIcon() {
 }
 
 function DashboardNavigation({ mobile = false }: { mobile?: boolean }) {
+  const pathname = usePathname();
   return (
     <nav className="sidebar-nav" aria-label={mobile ? 'Mobile admin navigation' : 'Admin navigation'}>
-      <Link className="sidebar-link" href="/" aria-current="page">
+      <Link className="sidebar-link" href="/" aria-current={pathname === '/' ? 'page' : undefined}>
         <span className="nav-icon"><DashboardIcon /></span>
         <span>Dashboard</span>
       </Link>
-      {placeholderSections.map((section) => (
-        <span
-          className="sidebar-placeholder"
-          aria-disabled="true"
-          key={section}
-          title={`${section} is not connected in this demo`}
+      {sections.map((section) => (
+        <Link
+          aria-current={pathname === section.href ? 'page' : undefined}
+          className="sidebar-link"
+          href={section.href}
+          key={section.href}
         >
-          <span className="nav-icon" aria-hidden="true">·</span>
-          <span>{section}</span>
-        </span>
+          <span className="nav-icon" aria-hidden="true">{section.label.slice(0, 2).toUpperCase()}</span>
+          <span>{section.label}</span>
+        </Link>
       ))}
     </nav>
   );
 }
 
-function PlaceholderControls() {
+function WorkspaceControls() {
   return (
     <div className="topbar-actions">
-      <div className="global-search">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <circle cx="10.8" cy="10.8" r="6.3" />
-          <path d="m15.5 15.5 4.2 4.2" />
-        </svg>
-        <span>Search is not connected</span>
-      </div>
-      <button className="header-placeholder" type="button" disabled aria-label="Notifications unavailable in demo">
-        <span className="header-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24">
-            <path d="M18 9a6 6 0 0 0-12 0c0 7-2.5 7-2.5 9h17C20.5 16 18 16 18 9" />
-            <path d="M10 21h4" />
-          </svg>
-        </span>
-      </button>
-      <button
-        className="header-placeholder account-placeholder"
-        type="button"
-        disabled
-        aria-label="Account controls unavailable; authentication is not implemented"
-      >
-        <span className="header-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24">
-            <circle cx="12" cy="8" r="3.2" />
-            <path d="M5.5 20c.5-3.5 2.7-5.3 6.5-5.3s6 1.8 6.5 5.3" />
-          </svg>
-        </span>
-        <span className="account-label">Account</span>
-      </button>
+      <Link className="global-search" href="/products">Browse listings</Link>
+      <Link className="global-search" href="/activity">Recent activity</Link>
+      <Link className="global-search" href="/settings">Preferences</Link>
+      <AdminSessionActions />
     </div>
   );
 }
 
 export function AdminShell({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
+  const currentSection = sections.find((section) => section.href === pathname);
+  const currentPage = currentSection?.label ??
+    (pathname === '/login' ? 'Sign in' : pathname === '/bootstrap' ? 'Security setup' : 'Overview');
+
+  useEffect(() => {
+    try {
+      const saved = window.localStorage.getItem('shopademia:admin-display-preferences');
+      if (!saved) return;
+      const value: unknown = JSON.parse(saved);
+      if (
+        typeof value === 'object' && value !== null &&
+        'showNotices' in value && typeof value.showNotices === 'boolean' &&
+        'compactTables' in value && typeof value.compactTables === 'boolean'
+      ) {
+        document.documentElement.dataset.adminCompactTables = String(value.compactTables);
+        document.documentElement.dataset.adminShowNotices = String(value.showNotices);
+      }
+    } catch (cause) {
+      console.error('Unable to load local admin display preferences.', cause);
+    }
+  }, []);
+
   return (
     <div className="admin-shell">
       <aside className="sidebar" aria-label="Admin sidebar">
@@ -98,31 +104,35 @@ export function AdminShell({ children }: { children: ReactNode }) {
         <p className="sidebar-caption">Workspace</p>
         <DashboardNavigation />
         <p className="sidebar-footnote">
-          <strong>Frontend demo only</strong>
-          No live platform access or administrative actions are connected.
+          <strong>{usesAuth0Admin ? 'Super Admin access' : 'Local test only'}</strong>
+          {usesAuth0Admin
+            ? 'The API verifies the Auth0 identity, MFA claim, and Super Admin role.'
+            : 'The order actions use a loopback-only development API.'}
         </p>
       </aside>
 
       <div className="workspace">
         <div className="mobile-brand-row">
           <Brand />
-          <span className="demo-tag">DEMO</span>
+          <span className="demo-tag">{usesAuth0Admin ? 'ADMIN' : 'DEMO'}</span>
         </div>
         <details className="mobile-sidebar-nav">
-          <summary>Menu · Dashboard</summary>
+          <summary>Menu · {currentPage}</summary>
           <p className="sidebar-caption">Workspace</p>
           <DashboardNavigation mobile />
           <p className="sidebar-footnote">
-            <strong>Frontend demo only</strong>
-            No live platform access or administrative actions are connected.
+            <strong>{usesAuth0Admin ? 'Super Admin access' : 'Local test only'}</strong>
+            {usesAuth0Admin
+              ? 'The API verifies the Auth0 identity, MFA claim, and Super Admin role.'
+              : 'The order actions use a loopback-only development API.'}
           </p>
         </details>
         <header className="topbar">
           <div className="topbar-title">
-            <p className="breadcrumb">Workspace / Overview</p>
-            <p className="topbar-page-title">Dashboard overview</p>
+            <p className="breadcrumb">Workspace / {currentPage}</p>
+            <p className="topbar-page-title">{currentPage}</p>
           </div>
-          <PlaceholderControls />
+          <WorkspaceControls />
         </header>
         <main id="main-content" className="main-content" tabIndex={-1}>
           {children}

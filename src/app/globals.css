@@ -455,6 +455,111 @@ summary {
   overflow: hidden;
 }
 
+.admin-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 0.8rem 1rem;
+  border-top: 1px solid var(--line);
+  vertical-align: top;
+}
+
+.admin-table th {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.admin-table td {
+  font-size: 0.84rem;
+}
+
+.admin-action,
+.admin-quick-actions a {
+  display: inline-flex;
+  min-height: 2.35rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0.45rem 0.75rem;
+  border: 1px solid #d8dced;
+  border-radius: var(--radius-sm);
+  background: #fff;
+  color: var(--navy-800);
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.admin-action:hover,
+.admin-quick-actions a:hover {
+  border-color: var(--indigo);
+  color: var(--indigo-dark);
+}
+
+.admin-action:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.admin-action-danger {
+  border-color: #f0cbd0;
+  color: var(--red);
+}
+
+.admin-feedback {
+  margin: 0;
+  padding: 0.8rem 1rem;
+  color: var(--muted);
+}
+
+.admin-actions,
+.admin-quick-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  padding: 0.8rem 1rem 1rem;
+}
+
+.admin-application {
+  padding-bottom: 0.5rem;
+}
+
+.admin-application > p {
+  padding-inline: 1.2rem;
+}
+
+.admin-settings {
+  display: grid;
+  gap: 1rem;
+  padding: 1.2rem;
+}
+
+.admin-settings label {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+html[data-admin-compact-tables="true"] .admin-table th,
+html[data-admin-compact-tables="true"] .admin-table td {
+  padding-block: 0.4rem;
+}
+
+html[data-admin-show-notices="false"] .demo-banner {
+  display: none;
+}
+
 .panel-header {
   display: flex;
   align-items: flex-start;
@@ -686,6 +791,24 @@ summary {
     grid-template-columns: 14.5rem minmax(0, 1fr);
   }
 
+  .topbar {
+    flex-wrap: wrap;
+  }
+
+  .topbar-actions {
+    flex: 1 1 100%;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.5rem;
+  }
+
+  .global-search {
+    width: auto;
+    min-height: 2.4rem;
+    padding-inline: 0.65rem;
+    white-space: nowrap;
+  }
+
   .kpi-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -792,13 +915,11 @@ summary {
   }
 
   .account-placeholder {
-    width: 2.65rem;
-    padding: 0.45rem;
-    font-size: 0;
-  }
-
-  .account-placeholder .account-label {
-    display: none;
+    width: auto;
+    min-width: 0;
+    min-height: 2.4rem;
+    padding-inline: 0.65rem;
+    font-size: 0.72rem;
   }
 
   .main-content {

@@ -6,19 +6,27 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test:auth0-session-store": "node --test scripts/auth0-session-store.test.cjs",
+    "test:admin-proxy": "node --test scripts/admin-proxy.test.cjs"
   },
   "dependencies": {
-    "next": "14.2.15",
+    "@auth0/nextjs-auth0": "4.32.1",
+    "next": "15.5.28",
     "react": "18.3.1",
-    "react-dom": "18.3.1"
+    "react-dom": "18.3.1",
+    "redis": "5.8.2"
   },
   "devDependencies": {
     "@types/node": "20.14.12",
     "@types/react": "18.3.3",
     "@types/react-dom": "18.3.0",
-    "typescript": "5.5.4",
     "eslint": "8.57.0",
-    "eslint-config-next": "14.2.15"
+    "eslint-config-next": "14.2.35",
+    "typescript": "5.5.4"
+  },
+  "overrides": {
+    "glob": "10.5.0",
+    "postcss": "8.5.23"
   }
 }

@@ -3,11 +3,12 @@ import LoginForm from './login-form';
 import styles from './login.module.css';
 
 export const metadata: Metadata = {
-  title: 'Super-Admin Login',
-  description: 'Sign-in interface preview for the Shopademia Super-Admin portal.',
+  title: 'Admin sign-in',
+  description: 'Secure sign-in for Shopademia marketplace administrators.',
 };
 
 export default function LoginPage() {
+  const auth0Enabled = process.env.NEXT_PUBLIC_ADMIN_AUTH_MODE === 'auth0';
   return (
     <main id="main-content" className={styles.loginPage}>
       <section className={styles.brandPanel} aria-label="Shopademia Super-Admin portal">
@@ -45,16 +46,16 @@ export default function LoginPage() {
               </svg>
             </span>
             <span>
-              <strong>Extra protection matters</strong>
-              <span>Super-admin access is intended to require multi-factor authentication.</span>
+              <strong>Local development only</strong>
+                <span>This test identity is enabled only by the API loopback development mode.</span>
             </span>
           </div>
 
-          <LoginForm />
+          <LoginForm auth0Enabled={auth0Enabled} />
 
           <p className={styles.securityBoundary}>
-            <strong>Preview only.</strong> Authentication is not connected. This page does not
-            protect the dashboard or API, and credentials entered here are not sent or stored.
+            <strong>Local test only.</strong> Use the test credentials documented in the API
+            README. This identity is not suitable for production and has no real MFA.
           </p>
 
           <p className={styles.footer}>Shopademia · Super-Admin Portal</p>
